@@ -1,0 +1,135 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+enum Gender {
+  Female
+  Male
+}
+
+model User {
+  id             Int                  @id @default(autoincrement()) 
+  email          String               @unique @db.VarChar(50) 
+  name           String               @db.VarChar(50) 
+  gender         Gender               
+  dateOfBirth    DateTime             @db.Date 
+  address        String               @db.VarChar(225) 
+  contactNumber  String               @db.VarChar(20) 
+  hashedPassword String               @db.VarChar(100) 
+  proposals      Proposal[]
+  feedbacks      Feedback[]
+  mailinglist    MailingList[]
+  comments       Comment[]
+  likes          Like[]
+
+  @@map("users")
+}
+
+model Admin {
+  id             Int                  @id @default(autoincrement()) 
+  email          String               @unique @db.VarChar(50)
+  hashedPassword String               @db.VarChar(100)  
+}
+
+model Park {
+  id               Int                  @id @default(autoincrement())
+  name             String               @unique @db.VarChar(50)
+  description      String               @db.Text 
+  targetCompletion DateTime             @db.Date 
+  status           Int                  
+  plan             String               @db.Text 
+  perspective      String               @db.Text 
+  stage            String               @db.VarChar(100) 
+  proposals        Proposal[]
+  feedbacks        Feedback[]
+  mailinglist      MailingList[]
+
+
+  @@map("parks")
+}
+
+model Proposal {
+  id        Int       @id @default(autoincrement()) 
+  subject   String    @db.VarChar(250) 
+  text      String    @db.Text 
+  createdAt DateTime? 
+  comments  Comment[]
+  likes     Like[]
+  
+  // Foreign keys
+  userId    Int       
+  user      User      @relation(fields: [userId], references: [id])
+  
+  parkId    Int       
+  park      Park      @relation(fields: [parkId], references: [id])
+
+  @@map("proposals")
+}
+
+model Comment {
+  id          Int        @id @default(autoincrement())
+  text        String     @db.Text 
+  createdAt   DateTime?  
+
+  // Foreign keys
+  userId    Int       
+  user      User      @relation(fields: [userId], references: [id])
+
+  proposalId        Int
+  proposal   Proposal   @relation(fields: [proposalId],references: [id])
+}
+
+model Like {
+  id        Int     @id @default(autoincrement())
+  createdAt   DateTime? 
+
+    // Foreign keys
+  userId    Int       
+  user      User      @relation(fields: [userId], references: [id])
+
+  proposalId        Int
+  proposal    Proposal   @relation(fields: [proposalId],references: [id])
+
+}
+model Feedback {
+  id        Int       @id @default(autoincrement())
+  subject   String    @db.VarChar(250)
+  text      String    @db.Text
+  createdAt DateTime? 
+  
+  // Foreign keys
+  userId    Int       
+  user      User      @relation(fields: [userId], references: [id])
+  
+  parkId    Int       
+  park      Park      @relation(fields: [parkId], references: [id])
+
+  @@map("Feedbacks")
+}
+
+model MailingList{
+  id       Int       @id @default(autoincrement()) 
+  createdAt DateTime? 
+
+    // Foreign keys
+  userId    Int      
+  user      User      @relation(fields: [userId], references: [id])
+  
+  parkId    Int       
+  park      Park      @relation(fields: [parkId], references: [id])
+
+  @@map("mailingList")
+
+}
