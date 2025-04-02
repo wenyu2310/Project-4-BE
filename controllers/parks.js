@@ -12,13 +12,35 @@ router.get("/", verifyToken, async (req, res) => {
     }
   });
   
+  router.get("/all-proposals", verifyToken, async(req, res) => {
+    try {
+      const proposals = await prisma.proposal.findMany({
+        include: {
+          user: true,
+          park:true
+        }
+    });
+      
+      res.status(200).json(proposals);
+    } catch (err) {
+      res.status(500).json({ err: err.message });
+    }
+  });
+  
   router.get("/:parkId",verifyToken, async (req,res) =>{
     try {
         const park = await prisma.park.findFirst(
             { 
                 where: {
                    id: parseInt(req.params.parkId)
-                },
+                }, 
+                include: {
+                  proposals: {
+                    include: {
+                      user: true  // This includes the user for each proposal
+                    }
+                  }
+                }
              });
         res.status(200).json(park)
     } catch(err) {

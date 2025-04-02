@@ -30,13 +30,35 @@ const verifyToken = require('../middleware/verify-token')
   //READ / parks/:parkId/proposals
   router.get("/:parkId/proposals", verifyToken, async(req, res) => {
         try {
-          const proposals = await prisma.proposal.findMany()
+          const proposals = await prisma.proposal.findMany({
+            where: {
+              parkId: parseInt(req.params.parkId)
+            },
+            include: {
+              user: true
+            }
+        })
           res.status(200).json(proposals);
         } catch (err) {
           res.status(500).json({ err: err.message }); // 500 Internal Server Error
         }
       });
- 
+   //READ / parks/:parkId/proposals
+   router.get("/:parkId/proposals/:proposalId", verifyToken, async(req, res) => {
+    try {
+      const proposal = await prisma.proposal.findUnique({
+        where: {
+          id: parseInt(req.params.proposalId)
+        },
+        include: {
+          user: true
+        }
+      });
+      res.status(200).json(proposal);
+    } catch (err) {
+      res.status(500).json({ err: err.message }); // 500 Internal Server Error
+    }
+  });
     //PUT / parks/:parkId/proposals/:proposalId
     router.put("/:parkId/proposals/:proposalId", verifyToken, async(req, res) => {
       try {
