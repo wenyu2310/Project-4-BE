@@ -1,7 +1,7 @@
 const express = require("express")
 const router = express.Router()
 const bcrypt = require('bcrypt')
-const jwt =require('jsonwebtoken')
+const jwt = require('jsonwebtoken')
 const prisma = require("../modules/prisma.module");
 
 const saltRounds = 12;
@@ -23,16 +23,16 @@ router.post('/sign-up', async (req, res) => {
             email: req.body.email,
             name: req.body.name,
             gender: req.body.gender,
-            dateOfBirth:req.body.dateOfBirth,
+            dateOfBirth: req.body.dateOfBirth,
             address: req.body.address,
             contactNumber: req.body.contactNumber,
             hashedPassword: bcrypt.hashSync(req.body.password, saltRounds)
         }
-  });
+    });
 
     const payload = { email: user.email, id: user.id, isAdmin: false };
 
-    const token = jwt.sign(payload, process.env.JWT_SECRET);
+    const token = jwt.sign({ payload }, process.env.JWT_SECRET);
 
     res.status(201).json({ token });
   } catch (err) {
@@ -47,7 +47,7 @@ router.post('/sign-in', async (req, res) => {
         where: {
            email: req.body.email
         },
-     });;
+     });
       if (!user) {
         return res.status(401).json({ err: 'Invalid credentials.' });
       }
@@ -60,6 +60,7 @@ router.post('/sign-in', async (req, res) => {
       }
 
       const payload = { email: user.email, id: user.id, name:user.name, isAdmin: false };
+      const payload = { email: user.email, id: user.id, isAdmin: false, name: user.name };
   
       const token = jwt.sign({ payload }, process.env.JWT_SECRET);
   
@@ -87,17 +88,34 @@ router.post('/sign-in', async (req, res) => {
             email: req.body.email,
               hashedPassword: bcrypt.hashSync(req.body.password, saltRounds)
           }
+router.post('/admin/sign-up', async (req, res) => {
+  try {
+    const userInDatabase = await prisma.admin.findFirst({ 
+        where: {
+           email: req.body.email
+        },
+     });
+    if (userInDatabase) {
+      return res.status(409).json({err: 'Email already taken.'});
+    }
+    
+    const admin = await prisma.admin.create({
+        data:{
+            email: req.body.email,
+            hashedPassword: bcrypt.hashSync(req.body.password, saltRounds)
+        }
     });
   
       const payload = { email: admin.email, id: admin.id,name:admin.name, isAdmin: true };
+    const payload = { email: admin.email, id: admin.id, isAdmin: true, name: "Admin" };
   
-      const token = jwt.sign(payload, process.env.JWT_SECRET);
+    const token = jwt.sign({ payload }, process.env.JWT_SECRET);
   
-      res.status(201).json({ token });
-    } catch (err) {
-      res.status(500).json({ err: err.message });
-    }
-  });
+    res.status(201).json({ token });
+  } catch (err) {
+    res.status(500).json({ err: err.message });
+  }
+});
 
 
 //POST - Admin - Sign in
@@ -128,4 +146,32 @@ router.post('/sign-in', async (req, res) => {
         res.status(500).json({ err: err.message });
       }
     });
+router.post('/admin/sign-in', async (req, res) => {
+    try {
+      const admin = await prisma.admin.findFirst({ 
+        where: {
+           email: req.body.email
+        },
+      });
+      if (!admin) {
+        return res.status(401).json({ err: 'Invalid credentials.' });
+      }
+  
+      const isPasswordCorrect = bcrypt.compareSync(
+        req.body.password, admin.hashedPassword
+      );
+      if (!isPasswordCorrect) {
+        return res.status(401).json({ err: 'Invalid credentials.' });
+      }
+
+      const payload = { email: admin.email, id: admin.id, isAdmin: true, name: "Admin" };
+  
+      const token = jwt.sign({ payload }, process.env.JWT_SECRET);
+  
+      res.status(200).json({ token });
+    } catch (err) {
+      res.status(500).json({ err: err.message });
+    }
+});
+
 module.exports = router
