@@ -30,7 +30,15 @@ const verifyAdmin = require('../middleware/verify-admin')
   //READ / parks/:parkId/mailingList
   router.get("/:parkId/mailingList", verifyToken, verifyAdmin,async(req, res) => {
         try {
-          const mailingLists = await prisma.mailingList.findMany()
+          const parkId = parseInt(req.params.parkId);
+          const mailingLists = await prisma.mailingList.findMany({
+            where: {
+              parkId: parkId
+            },
+            include: {
+              user: true
+            }
+          })
           res.status(200).json(mailingLists);
         } catch (err) {
           res.status(500).json({ err: err.message }); // 500 Internal Server Error

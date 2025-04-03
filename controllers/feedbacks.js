@@ -32,8 +32,16 @@ const verifyAdmin = require('../middleware/verify-admin')
   //READ / parks/:parkId/feedbacks
   router.get("/:parkId/feedbacks", verifyToken,verifyAdmin, async(req, res) => {
         try {
+          const parkId = parseInt(req.params.parkId);
           
-          const feedbacks = await prisma.feedback.findMany()
+          const feedbacks = await prisma.feedback.findMany({
+            where: {
+              parkId: parkId
+            },
+            include: {
+              user: true
+            }
+          })
           res.status(200).json(feedbacks);
         } catch (err) {
           res.status(500).json({ err: err.message }); // 500 Internal Server Error

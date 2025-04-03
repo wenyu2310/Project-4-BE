@@ -28,8 +28,6 @@ router.get("/", verifyToken, async (req, res) => {
   });
   
 
- 
-
   router.get("/:parkId",verifyToken, async (req,res) =>{
     try {
         const park = await prisma.park.findFirst(
@@ -59,11 +57,11 @@ router.post("/", verifyToken, async(req, res) => {
       data: {
         name: req.body.name, // Assuming these field names from your schema
         description: req.body.description,
-        targetCompletion:new Date(req.body.targetCompletion),
-        status:req.body.status,
+        targetCompletion: new Date(req.body.targetCompletion), // Convert to Date object
+        status: parseInt(req.body.status),
         plan:req.body.plan,
         perspective:req.body.perspective,
-        stage:req.body.stage,
+        stage: String(req.body.stage)
   
       },
       // Include related user data in the response
@@ -75,6 +73,42 @@ router.post("/", verifyToken, async(req, res) => {
     res.status(201).json(newPark);
   } catch (err) {
     res.status(500).json({ err: err.message })
+  }
+});
+
+//PUT / parks/:parkId/proposals/:proposalId
+router.put("/:parkId", verifyToken, async (req, res) => {
+  try {
+    
+    const park = await prisma.park.findUnique({
+      where: {
+        id: parseInt(req.params.parkId),
+      },
+
+    });
+
+    if (!park) {
+      return res.status(404).json({ err: "Park not found" });
+    }
+
+    const updatedPark = await prisma.park.update({
+      where: {
+        id: parseInt(req.params.parkId),
+      },
+      data: {
+        name: req.body.name, // Assuming these field names from your schema
+        description: req.body.description,
+        targetCompletion: new Date(req.body.targetCompletion), // Convert to Date object
+        status: parseInt(req.body.status),
+        plan:req.body.plan,
+        perspective:req.body.perspective,
+        stage: req.body.stage
+      },
+    });
+
+    res.status(200).json(updatedPark);
+  } catch (err) {
+    res.status(500).json({ err: err.message });
   }
 });
   module.exports = router
