@@ -37,6 +37,23 @@ const verifyToken = require('../middleware/verify-token')
         }
       });
  
+      router.get("/:parkId/proposals/:proposalId",verifyToken, async (req,res) =>{
+        try {
+            const proposal = await prisma.proposal.findFirst(
+                { 
+                    where: {
+                       id: parseInt(req.params.proposalId)
+                    }, 
+                    include: {
+                      park: true,
+                      user:true
+                    }
+                 });
+            res.status(200).json(proposal)
+        } catch(err) {
+            res.status(500).json({ err:err.message})
+        }
+    })
     //PUT / parks/:parkId/proposals/:proposalId
     router.put("/:parkId/proposals/:proposalId", verifyToken, async(req, res) => {
       try {

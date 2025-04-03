@@ -30,7 +30,7 @@ router.post('/sign-up', async (req, res) => {
         }
   });
 
-    const payload = { email: user.email, id: user.id };
+    const payload = { email: user.email, id: user.id, isAdmin: false };
 
     const token = jwt.sign(payload, process.env.JWT_SECRET);
 
@@ -59,7 +59,7 @@ router.post('/sign-in', async (req, res) => {
         return res.status(401).json({ err: 'Invalid credentials.' });
       }
 
-      const payload = { email: user.email, id: user.id };
+      const payload = { email: user.email, id: user.id, name:user.name, isAdmin: false };
   
       const token = jwt.sign({ payload }, process.env.JWT_SECRET);
   
@@ -83,12 +83,13 @@ router.post('/sign-in', async (req, res) => {
       
       const admin = await prisma.admin.create({
           data:{
-              email: req.body.email,
+            name:req.body.name,
+            email: req.body.email,
               hashedPassword: bcrypt.hashSync(req.body.password, saltRounds)
           }
     });
   
-      const payload = { email: admin.email, id: admin.id, isAdmin: true };
+      const payload = { email: admin.email, id: admin.id,name:admin.name, isAdmin: true };
   
       const token = jwt.sign(payload, process.env.JWT_SECRET);
   
@@ -118,7 +119,7 @@ router.post('/sign-in', async (req, res) => {
           return res.status(401).json({ err: 'Invalid credentials.' });
         }
   
-        const payload = { email: admin.email, id: admin.id, isAdmin: true};
+        const payload = { email: admin.email, id: admin.id, name:admin.name, isAdmin: true};
     
         const token = jwt.sign({ payload }, process.env.JWT_SECRET);
     
