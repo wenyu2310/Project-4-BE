@@ -92,6 +92,7 @@ router.post("/admin/sign-up", async (req, res) => {
       data: {
         email: req.body.email,
         hashedPassword: bcrypt.hashSync(req.body.password, saltRounds),
+        name: req.body.name
       },
     });
 
@@ -135,7 +136,7 @@ router.post("/admin/sign-in", async (req, res) => {
       email: admin.email,
       id: admin.id,
       isAdmin: true,
-      name: "Admin",
+      name: admin.name,
     };
 
     const token = jwt.sign({ payload }, process.env.JWT_SECRET);
