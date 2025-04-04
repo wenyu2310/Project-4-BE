@@ -2,7 +2,7 @@
 <img width="552" alt="Screenshot 2025-04-04 at 11 20 32 PM" src="https://github.com/user-attachments/assets/04383883-4f39-4425-80bc-b1f946b1acd7" />
 
 ## Link to Site
-parkitect.vercel.app
+www.parkitect.vercel.app
 
 ## Project Brief
 'Parkitect':Engaging the Public Early and Often- Because GreatSpaces Are Built Together.
@@ -99,9 +99,6 @@ MailingList Schema
 6. The project has at least two data entities in addition to the User model. At least one entity must have a relationship with the User model.
 7. The project has full CRUD functionality on both the back-end and front-end.
 8. The front-end application does not hold any secret keys. Public APIs that require secret keys must be accessed from the back-end application.
-
-## Tests on Postman screenshot
-![image](https://github.com/user-attachments/assets/ceab1ccf-7761-454f-b388-12460a6468ee)
 
 
 ## Planned future enhancements
