@@ -111,5 +111,33 @@ router.put("/:parkId", verifyToken, async (req, res) => {
     res.status(500).json({ err: err.message });
   }
 });
+
+router.delete("/:parkId", verifyToken, async (req, res) => {
+    try {
+      const userId = req.user.id; // Assuming verifyToken middleware adds user object
+
+      const park = await prisma.park.findUnique({
+        where: {
+          id: parseInt(req.params.parkId),
+        },
+   
+      });
+
+      if (!park) {
+        return res.status(404).json({ err: "Park not found" });
+      }
+
+      const deletedPark = await prisma.park.delete({
+        where: {
+          id: parseInt(req.params.parkId),
+        },
+      });
+
+      res.status(200).json(deletedPark);
+    } catch (err) {
+      res.status(500).json({ err: err.message });
+    }
+  }
+);
   module.exports = router
  
