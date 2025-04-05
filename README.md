@@ -1,4 +1,4 @@
-# Developing a 'Company Ideas Incubator Tool' 
+# Developing a 'Parkitect Backend' 
 <img width="552" alt="Screenshot 2025-04-04 at 11 20 32 PM" src="https://github.com/user-attachments/assets/04383883-4f39-4425-80bc-b1f946b1acd7" />
 
 ## Link to Site
@@ -93,7 +93,7 @@ MailingList Schema
 ## MVP- Minimum Viable Product
 1. At least 3 data entities components
 2. The back-end application is built with Express and Node.
-3. Prisma and Supabase used as the database management system.
+3. Prisma and Prisma, Supabase used as the database management system.
 4. The back-end and front-end applications implement JWT token-based authentication to sign up, sign in, and sign out users.
 5. Authorization is implemented across the front-end and back-end. Guest users (those not signed in) should not be able to create, update, or delete data in the application or access functionality allowing those actions.
 6. The project has at least two data entities in addition to the User model. At least one entity must have a relationship with the User model.
