@@ -4,13 +4,6 @@
 ## Link to Site
 www.parkitect.vercel.app
 
-## Project Brief
-'Parkitect':Engaging the Public Early and Often- Because GreatSpaces Are Built Together.
-The tool will provide a platform for
-1. Structured Engagement - Enable participation from the project start through a user-friendly platform, 
-2. Transparent Communication- Provides regular project timeline and design updates, shows how public input shapes decisions
-3. Community Investment-  Documents community participation through development, build a sense of ownership by co-creating spaces
-
 ## Timeframe
 3 weeks
   
